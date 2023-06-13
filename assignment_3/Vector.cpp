@@ -1,9 +1,6 @@
 #ifndef VECTOR_CPP
 #define VECTOR_CPP
 
-#include <cassert>
-#include <stdexcept>
-#include <cmath>
 #include "Vector.hpp"
 
 template <class T>
@@ -25,7 +22,7 @@ const T &Vector<T>::operator[](int index) const
 }
 
 template <class T>
-int Vector<T>::getSize() const
+int Vector<T>::size() const
 {
     return mSize;
 }
@@ -36,7 +33,7 @@ Vector<T> &Vector<T>::operator=(const Vector &otherVector)
 {
     assert(mSize == otherVector.mSize);
 
-    for (int i = 0; i < mSize; i++)
+    for (unsigned int i = 0; i < mSize; i++)
     {
         mData[i] = otherVector.mData[i];
     }
@@ -48,7 +45,7 @@ template <class T>
 Vector<T> Vector<T>::operator-() const
 {
     Vector v(mSize);
-    for (int i = 0; i < mSize; i++)
+    for (unsigned int i = 0; i < mSize; i++)
     {
         v[i] = -mData[i];
     }
@@ -62,7 +59,7 @@ Vector<T> Vector<T>::operator+(const Vector &v1) const
     assert(mSize == v1.mSize);
 
     Vector v(mSize);
-    for (int i = 0; i < mSize; i++)
+    for (unsigned int i = 0; i < mSize; i++)
     {
         v[i] = mData[i] + v1.mData[i];
     }
@@ -106,5 +103,11 @@ double Vector<T>::CalculateNorm(int p) const
     }
     return std::pow(sum, 1.0 / ((double)(p)));
 };
+
+template <class T>
+inline std::vector<T> const &Vector<T>::getStorage()
+{
+    return mData;
+}
 
 #endif

@@ -3,44 +3,72 @@
 
 #include "SparseVector.hpp"
 
+// Construct SparseVector with given dimension
 template <class T>
-SparseVector<T>::SparseVector(unsigned int dim) : mSize(dim) {}
+SparseVector<T>::SparseVector(unsigned int dim)
+{
+	mSize = dim;
+	// init mData with empty vector
+	mData = std::vector<std::pair<unsigned int, T>>();
+}
 
-// template <class T>
-// SparseVector<T>::SparseVector(const SparseVector<T> &other)
-// {
-//     mSize = other.mSize;
-//     mData = other.mData;
-// }
+template <class T>
+SparseVector<T>::SparseVector()
+{
+	mSize = 0;
+	mData = std::vector<std::pair<unsigned int, T>>();
+}
+
 
 template <class T>
 inline void SparseVector<T>::setValue(unsigned int index, T value)
 {
-	// Search for the index in the mData vector
-	for (auto &entry : mData)
+	// Check if the index is greater than the current size
+	if (index >= mSize)
+		mSize = index + 1; // Update the size of the vector
+
+	// Find the position to insert or update the value using lower_bound
+	auto it = std::lower_bound(mData.begin(), mData.end(), std::make_pair(index, value),
+							   [](const std::pair<unsigned int, T> &a, const std::pair<unsigned int, T> &b)
+							   {
+								   return a.first < b.first;
+							   });
+
+	if (it != mData.end() && it->first == index)
 	{
-		if (entry.first == index)
-		{
-			entry.second = value;
-			return;
-		}
+		// Index already exists, update the corresponding value
+		it->second = value;
 	}
-	// If the index is not found, add a new entry
-	mData.push_back(std::make_pair(index, value));
+	else
+	{
+		// Index doesn't exist, insert the index-value pair at the found position
+		mData.insert(it, std::make_pair(index, value));
+	}
 }
 
 template <class T>
 T SparseVector<T>::getValue(unsigned int index) const
 {
-	unsigned int pos = indexNonZero(index);
+	// Check if the index is out of bounds
+	if (index >= mSize)
+		return T(); // Index is not stored, return default value (0)
+		
+	// Find the position of the index using lower_bound
+	auto it = std::lower_bound(mData.begin(), mData.end(), std::make_pair(index, T()),
+							   [](const std::pair<unsigned int, T> &a, const std::pair<unsigned int, T> &b)
+							   {
+								   return a.first < b.first;
+							   });
 
-	if (pos < mData.size() && mData[pos].first == index)
+	if (it != mData.end() && it->first == index)
 	{
-		return mData[pos].second;
+		// Index exists, return the corresponding value
+		return it->second;
 	}
 	else
 	{
-		return T(); // Return default value when index is not found
+		// Index doesn't exist, return default value (0)
+		return T();
 	}
 }
 
@@ -144,6 +172,12 @@ SparseVector<T> &SparseVector<T>::operator-=(SparseVector<T> const &x)
 	}
 
 	return *this;
+}
+
+template <class T>
+std::vector<T> const &SparseVector<T>::getStorage()
+{
+	return mData;
 }
 
 // computes z= x+y, equivalent to z=x, z+=y

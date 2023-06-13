@@ -5,13 +5,15 @@
 #include <stdexcept>
 #include <cmath>
 #include <vector>
+#include <algorithm>
+#include <iostream>
 
 template <class T>
 class Vector
 {
 private:
     std::vector<T> mData; // data stored in vector
-    int mSize; // size of vector
+    unsigned int mSize; // size of vector
 
 public:
     Vector(int size);
@@ -20,7 +22,7 @@ public:
     T& operator[](int index);
     const T& operator[](int index) const;
 
-    int getSize() const;
+    int size() const;
     
 	// assignment operator
 	Vector& operator=(const Vector& otherVector);
@@ -39,8 +41,12 @@ public:
 
 	// p-norm method
 	double CalculateNorm(int p = 2) const;
+
+    std::vector<T> const& getStorage();
 };
 
 #include "Vector.cpp"
 
 #endif
+
+

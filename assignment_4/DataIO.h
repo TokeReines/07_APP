@@ -8,8 +8,8 @@ using namespace arma;
 class DataIO {
 public:
     static mat readData(const std::string& filename);
-    static uvec readLabels(const std::string& filename);
-    static void writeLabels(const std::string& filename, const uvec& labels);
+    static vec readLabels(const std::string& filename);
+    static void writeLabels(const std::string& filename, const vec& labels);
 };
 
 #endif // DATAIO_H

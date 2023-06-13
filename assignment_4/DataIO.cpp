@@ -1,7 +1,8 @@
 #include "DataIO.h"
 #include <fstream>
 
-mat DataIO::readData(const std::string &filename)
+
+arma::mat DataIO::readData(const std::string &filename)
 {
     // Check if the file exists
     std::ifstream file(filename);
@@ -16,7 +17,7 @@ mat DataIO::readData(const std::string &filename)
     return data;
 }
 
-uvec DataIO::readLabels(const std::string &filename)
+vec DataIO::readLabels(const std::string &filename)
 {
     // Check if the file exists
     std::ifstream file(filename);
@@ -26,12 +27,12 @@ uvec DataIO::readLabels(const std::string &filename)
     }
     file.close();
 
-    uvec labels;
+    vec labels;
     labels.load(filename, raw_ascii);
     return labels;
 }
 
-void DataIO::writeLabels(const std::string &filename, const uvec &labels)
+void DataIO::writeLabels(const std::string &filename, const vec &labels)
 {
     // Open the file for writing
     std::ofstream file(filename);
@@ -43,8 +44,7 @@ void DataIO::writeLabels(const std::string &filename, const uvec &labels)
     // Write the labels to the file as -1 and 1
     for (uword i = 0; i < labels.n_elem; ++i)
     {
-        int label = (labels(i) == 0) ? -1 : 1;
-        file << label;
+        file << labels(i);
         if (i != labels.n_elem - 1)
         {
             file << std::endl;
